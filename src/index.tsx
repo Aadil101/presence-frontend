@@ -3,6 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Providers } from "@microsoft/mgt-element";
+import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
+import { Client } from '@microsoft/microsoft-graph-client';
+
+
+Providers.globalProvider = new Msal2Provider({
+  clientId: 'e4843b3d-a50c-40d5-bd49-fcd0f253ba3b',
+  scopes: ['presence.read', 'presence.read.all'],
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
