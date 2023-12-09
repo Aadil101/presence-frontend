@@ -5,8 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Providers } from "@microsoft/mgt-element";
 import { Msal2Provider } from "@microsoft/mgt-msal2-provider";
-import { Client } from '@microsoft/microsoft-graph-client';
-
 
 Providers.globalProvider = new Msal2Provider({
   clientId: 'e4843b3d-a50c-40d5-bd49-fcd0f253ba3b',
@@ -17,9 +15,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <App />
 );
 
 // If you want to start measuring performance in your app, pass a function

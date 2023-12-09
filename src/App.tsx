@@ -1,7 +1,8 @@
 import { Providers, ProviderState } from '@microsoft/mgt-element';
-import { Person, Login } from '@microsoft/mgt-react';
-import React, { useState, useEffect } from 'react';
+import { Login, ThemeToggle } from '@microsoft/mgt-react';
+import React, { useEffect, useState } from 'react';
 import { Client } from '@microsoft/microsoft-graph-client';
+import { FluentProvider, teamsLightTheme, teamsDarkTheme, Text } from "@fluentui/react-components";
 import './App.css';
 
 function useIsSignedIn(): [boolean] {
@@ -24,8 +25,9 @@ function useIsSignedIn(): [boolean] {
   return [isSignedIn];
 }
 
-function useAvail(): [string] {
-  const [avail, setAvail] = useState('');
+function usePresence(): [string, string] {
+  const [availability, setAvailability] = useState('');
+  const [activity, setActivity] = useState('');
   
   useEffect(() => {
     const fetchAvail = async () => {
@@ -36,29 +38,37 @@ function useAvail(): [string] {
           .api('/me/presence')
           .version('beta')
           .get();
-        setAvail(result.availability);
+        setAvailability(result.availability);
+        setActivity(result.activity);
       } else {
-        setAvail('unknown');
+        setAvailability('');
+        setActivity('');
       }
     }
     Providers.onProviderUpdated(fetchAvail);
   }, [])
 
-  return [avail];
+  return [availability, activity];
 }
 
 function App() {
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [isSignedIn] = useIsSignedIn();
-  const [avail] = useAvail();
-  
+  const [availability, activity] = usePresence();
+
   return (
-    <div className="app">
-      <Login showPresence={true} loginView='full'/>
-      {isSignedIn && 
-        <p>{avail}</p>
-      }
-      {/* {<Person personQuery='me' showPresence={true} view={6}/>} */}
-    </div>
+    <FluentProvider theme={isDarkMode ? teamsDarkTheme : teamsLightTheme}>
+      <div className="app">
+        <Login showPresence={true} loginView='full'/>
+        {isSignedIn && availability && activity && 
+          <>
+            <Text>Availability: {availability}</Text>
+            <Text>Activity: {activity}</Text>
+          </>
+        }
+        <ThemeToggle darkmodechanged={(e) => setIsDarkMode(e.detail)}>Dark Mode</ThemeToggle>
+      </div>
+    </FluentProvider>
   );
 }
 
